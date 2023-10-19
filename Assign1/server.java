@@ -70,7 +70,14 @@ class MainThread extends Thread {
                 } else if (choice == 2) { //user chooses the date time, so instead start a single subthread on the currentdate class
                     Thread thread_date = new currentdate(dis, dos);
                     thread_date.start();
-                } else if (choice == 3) { //This took me a WHILE to figure out hahaha. 
+
+                } else if (choice == 3) {//added this option for fun
+                    int x = dis.readInt();
+                    System.out.println("I got: " + x);
+                    Thread thread_wait = new waittimer(dis,dos,x);
+                    thread_wait.start();
+
+                } else if (choice == 4) {
                     client.close(); // Closing the client socket if they choose to exit
                     return; // returning here is KEY, if not, the server will continue to try and write to the outputstream
                 }
@@ -210,6 +217,35 @@ class quotient extends Thread {
         }
     }
 }
+
+
+class waittimer extends Thread { //this class simply returns the localdate of the server to the client.
+    private DataInputStream dis;
+    private DataOutputStream dos;
+    private int x;
+
+    public waittimer(DataInputStream dis, DataOutputStream dos, int x) {
+        this.dis = dis;
+        this.dos = dos;
+        this.x = x;
+    }
+
+    public void run() {
+        try {
+            Thread.sleep(100); //small sleep here just to keep things working smoothly
+            dos.writeBytes("Going to sleep..." + "\n");
+            System.out.println("Sleeping for now...");
+            Thread.sleep(x*1000);
+            System.out.println("Done sleep");
+            
+            dos.writeBytes("Done sleeping" + "\n");
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getMessage());
+        }
+    }
+}
+
 
 class currentdate extends Thread { //this class simply returns the localdate of the server to the client.
     private DataInputStream dis;
